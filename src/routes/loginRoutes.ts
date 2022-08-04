@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 
 const router = Router();
 
@@ -6,19 +6,29 @@ interface RequestWithBody extends Request {
 	body: { [key: string]: string | undefined };
 }
 
+const requiredAuth = (req: Request, res: Response, next: NextFunction) => {
+	if (req.session && req.session.loggedIn) {
+		next();
+		return;
+	}
+
+	res.status(403);
+	res.send('У вас нет допуска');
+};
+
 router.get('/', (req: Request, res: Response) => {
 	if (req.session && req.session.loggedIn) {
 		res.send(`
 			<div>
-				<div>You are logged in</div>
-				<a href="/logout">logout</a>
+				<div>Вы вошли в систему</div>
+				<a href="/logout">Выйти</a>
 			</div>
 		`);
 	} else {
 		res.send(`
 			<div>
-				<div>You are not logged in</div>
-				<a href="/login">login</a>
+				<div>Вы не вошли в систему</div>
+				<a href="/login">Войти</a>
 			</div>
 		`);
 	}
@@ -32,10 +42,10 @@ router.get('/login', (req: Request, res: Response) => {
 				<input name="email">
 			</div>
 			<div>
-				<label>password</label>
+				<label>пароль</label>
 				<input name="password" type="password">
 			</div>
-			<button>submit</button>
+			<button>отправить</button>
 		</form>
 	`);
 });
@@ -45,6 +55,10 @@ router.get('/logout', (req: Request, res: Response) => {
 	res.redirect('/');
 });
 
+router.get('/protected', requiredAuth, (req: Request, res: Response) => {
+	res.send(`добро пожаловать на защищенный путь`);
+});
+
 router.post('/login', (req: RequestWithBody, res: Response) => {
 	const { email, password } = req.body;
 
@@ -52,7 +66,7 @@ router.post('/login', (req: RequestWithBody, res: Response) => {
 		req.session = { loggedIn: true };
 		res.redirect('/');
 	} else {
-		res.send('invalid email or pass');
+		res.send('неправильный email или пароль');
 	}
 });
 
