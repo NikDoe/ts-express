@@ -2,6 +2,10 @@ import { Request, Response, Router } from 'express';
 
 const router = Router();
 
+interface RequestWithBody extends Request {
+	body: { [key: string]: string | undefined };
+}
+
 router.get('/login', (req: Request, res: Response) => {
 	res.send(`
 		<form method="post">
@@ -18,10 +22,10 @@ router.get('/login', (req: Request, res: Response) => {
 	`);
 });
 
-router.post('/login', (req: Request, res: Response) => {
+router.post('/login', (req: RequestWithBody, res: Response) => {
 	const { email, password } = req.body;
 
-	res.send(email + password);
+	if (email) res.send(email.toUpperCase());
 });
 
 export { router };
