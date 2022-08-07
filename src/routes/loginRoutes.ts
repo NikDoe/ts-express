@@ -34,22 +34,6 @@ router.get('/', (req: Request, res: Response) => {
 	}
 });
 
-router.get('/login', (req: Request, res: Response) => {
-	res.send(`
-		<form method="post">
-			<div>
-				<label>email</label>
-				<input name="email">
-			</div>
-			<div>
-				<label>пароль</label>
-				<input name="password" type="password">
-			</div>
-			<button>отправить</button>
-		</form>
-	`);
-});
-
 router.get('/logout', (req: Request, res: Response) => {
 	req.session = undefined;
 	res.redirect('/');
