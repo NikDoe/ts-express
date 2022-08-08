@@ -16,7 +16,10 @@ export function controller(routePrefix: string) {
 				targetKey,
 			);
 
-			if (path) router[method](`${routePrefix}${path}`, routeHandler);
+			const middlewares =
+				Reflect.getMetadata(MetadataKeys.middleware, target, targetKey) || [];
+
+			if (path) router[method](`${routePrefix}${path}`, ...middlewares, routeHandler);
 		}
 	};
 }
