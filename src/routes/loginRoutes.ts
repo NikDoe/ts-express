@@ -34,11 +34,6 @@ router.get('/', (req: Request, res: Response) => {
 	}
 });
 
-router.get('/logout', (req: Request, res: Response) => {
-	req.session = undefined;
-	res.redirect('/');
-});
-
 router.get('/protected', requiredAuth, (req: Request, res: Response) => {
 	res.send(`добро пожаловать на защищенный путь`);
 });
