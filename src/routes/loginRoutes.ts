@@ -43,15 +43,4 @@ router.get('/protected', requiredAuth, (req: Request, res: Response) => {
 	res.send(`добро пожаловать на защищенный путь`);
 });
 
-router.post('/login', (req: RequestWithBody, res: Response) => {
-	const { email, password } = req.body;
-
-	if (email && password && email === 'hi@hi.ru' && password === '1234') {
-		req.session = { loggedIn: true };
-		res.redirect('/');
-	} else {
-		res.send('неправильный email или пароль');
-	}
-});
-
 export { router };
